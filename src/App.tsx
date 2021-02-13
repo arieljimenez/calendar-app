@@ -1,13 +1,19 @@
 import React from 'react';
+import { ThemeProvider } from 'theme-ui'
+
+import { CalendarContainer } from './containers';
+
+import theme from './configs/theme';
+
 
 interface AppProps {}
 
 function App({}: AppProps) {
 
   return (
-    <div className="App">
-      Hello world!
-    </div>
+    <ThemeProvider theme={theme}>
+      <CalendarContainer />
+    </ThemeProvider>
   );
 }
 

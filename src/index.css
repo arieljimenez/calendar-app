@@ -1,15 +1,27 @@
 /* Globals */
 
-body {
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  padding: 0;
+}
+
+html, body, #root {
+  background-color: #ebedef;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Roboto, -apple-system,BlinkMacSystemFont,segoe ui,helvetica neue,Arial,noto sans,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol,noto color emoji;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+a, a:visited, a:valid, a:active {
+  color: inherit;
+  text-decoration: none;
 }
