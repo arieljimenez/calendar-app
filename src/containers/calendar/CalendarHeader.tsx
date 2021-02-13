@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from 'theme-ui';
+import { Box, Text } from 'theme-ui';
 
 const DAYS = [
   'Sunday',
@@ -11,27 +11,47 @@ const DAYS = [
   'Saturday',
 ];
 
+const sxCalendarHeader = {
+  my: [2],
+}
+
+const sxWeekDays = {
+    bg: 'sanMarino',
+    display: 'flex',
+    border: '2px solid grey',
+    justifyContent: 'space-evenly',
+}
+
+const sxCurrentMonth = {
+  fontSize: [5],
+  fontWeight: ['bold'],
+  mb: [2],
+}
+
+const sxDayName = {
+  color: 'white',
+  fontWeight: 'bold',
+}
 const DayName = (dayName: string): JSX.Element  => (
-  <Box sx={{
-    // display: 'flex-inline',
-    // width: '100px',
-  }}>
+  <Box sx={sxDayName}>
     {dayName}
   </Box>
 )
+interface CalendarHeaderProps {
+  monthName: string;
+}
 
-const CalendarHeader = (): JSX.Element => {
-  const Header = DAYS.map(dayName => DayName(dayName));
+const CalendarHeader = ({ monthName }: CalendarHeaderProps): JSX.Element => {
+  const weekDays = DAYS.map(dayName => DayName(dayName));
 
   return (
-    <Box sx={{
-      bg: 'sanMarino',
-      display: 'flex',
-      color: 'white',
-      fontWeight: 'bold',
-      border: '2px solid grey',
-    }}>
-      {Header}
+    <Box sx={sxCalendarHeader}>
+      <Text className='currentMonth'  sx={{ textAlign: 'center', ...sxCurrentMonth}}>
+        {monthName}
+      </Text>
+      <Box sx={sxWeekDays}>
+        {weekDays}
+      </Box>
     </Box>
   )
 }

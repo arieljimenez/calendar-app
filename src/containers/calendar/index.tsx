@@ -2,6 +2,9 @@ import React from 'react';
 import { Box } from 'theme-ui';
 
 import CalendarHeader from './CalendarHeader';
+import CalendarBody from './CalendarBody';
+
+import { getMonth } from '../../helpers/date';
 
 const sxCalendarContainer = {
   width: [null, null, '600px', '960px'],
@@ -10,10 +13,15 @@ const sxCalendarContainer = {
 }
 
 const CalendarContainer = (): React.ReactElement => {
+
+  const currentDate = new Date();
+
+  const startingMonth = getMonth({ date: currentDate });
+
   return (
     <Box sx={sxCalendarContainer}>
-      <CalendarHeader />
-
+      <CalendarHeader monthName={startingMonth} />
+      <CalendarBody />
     </Box>
   )
 }
