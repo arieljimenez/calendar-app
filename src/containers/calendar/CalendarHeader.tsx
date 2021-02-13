@@ -12,13 +12,14 @@ const DAYS = [
 ];
 
 const sxCalendarHeader = {
-  my: [2],
+  mt: [2],
+  mb: 0,
 }
 
 const sxWeekDays = {
     bg: 'sanMarino',
-    display: 'flex',
     border: '2px solid grey',
+    display: 'flex',
     justifyContent: 'space-evenly',
 }
 
@@ -33,7 +34,7 @@ const sxDayName = {
   fontWeight: 'bold',
 }
 const DayName = (dayName: string): JSX.Element  => (
-  <Box sx={sxDayName}>
+  <Box key={dayName} sx={sxDayName}>
     {dayName}
   </Box>
 )

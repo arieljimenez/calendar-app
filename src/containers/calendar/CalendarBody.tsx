@@ -1,47 +1,40 @@
 import React from 'react';
 import { Box, Text } from 'theme-ui';
 
+import { getCellColor } from '../../helpers';
 
-interface getCellColorProps {
-  idx: number;
-  dayNumber: number;
+
+const sxCalendarCell = {
+  border: '1px solid',
+  borderStyle:'inset',
+  fontWeight: 'bold',
+  padding: [2],
 }
 
-function getCellColor({ idx, dayNumber }: getCellColorProps):string {
-  let color = 'black';
-
-  // for the first and last week row, we need to dye other months days
-  if ((idx < 6 && dayNumber > 7) || (idx > 27 && dayNumber < 7)) {
-    color = 'gray';
-  }
-  // to know if is a weekend day and ignore if is from another month
-  if ((idx % 7 == 0 || idx % 7 === 6) && color !== 'gray'){
-    color = 'blue';
-  }
-
-  return color;
-}
-
-
-
-const CalendarCell = ({ idx='00', dayNumber='0', color='black', handleClick}: any): React.ReactElement => (
+const CalendarCell = ({ idx='00', dayNumber='0', handleClick}: any): React.ReactElement => (
   <Box
     onClick={() => handleClick(idx)}
+    sx={sxCalendarCell}
+    className='calendar-cell'
   >
-    <Text sx={{
-      color: getCellColor({idx, dayNumber}),
-      fontWeight: 'bold',
-    }}>
+    <Text sx={{color: getCellColor({ idx, dayNumber })}}>
       {dayNumber}
     </Text>
   </Box>
 )
 
 const sxCalendarBody = {
+  border: '1px outset',
   display: 'grid',
-  gridTemplateColumns: '14% 14% 14% 14% 14% 14% 14%',
+  gridTemplateColumns: 'repeat(7, 14%)', // 7 cols
+  gridTemplateRows: 'repeat(5, 100px)', // 5 rows
   justifyContent: 'space-evenly',
-  gridTemplateRows: '100px 100px 100px 100px 100px',
+  'div.calendar-cell': {
+    bg: 'white',
+  },
+  '.calendar-cell:nth-child(7n+1), .calendar-cell: nth-child(7n)': {
+    bg: 'lightgray'
+  },
 }
 
 const CalendarBody = ({ showMaxCells=35}): React.ReactElement => {
@@ -53,7 +46,6 @@ const CalendarBody = ({ showMaxCells=35}): React.ReactElement => {
         key={idx}
         idx={idx}
         dayNumber={idx}
-        color={'gray'}
       />
     )
   }
