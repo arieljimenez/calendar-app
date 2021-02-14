@@ -33,11 +33,33 @@ interface getMonthProps {
  * @returns {string} month
  */
 export function getMonth({ date = new Date(), options = {} }): string {
-
   const dateOptions = {
     month: 'long',
     ...options,
   }
 
   return new Intl.DateTimeFormat('en-US', dateOptions).format(date);
+}
+
+export function getMonthDays(month:string): number {
+  const MAPPED_MONTHS: {[key:string]: number} = {
+    january: 31,
+    february: 28,
+    march: 31,
+    april: 30,
+    may: 31,
+    june: 30,
+    july: 31,
+    august: 31,
+    september: 30,
+    october: 31,
+    november: 30,
+    december: 31,
+  }
+
+  let days = MAPPED_MONTHS[month.toLowerCase()];
+
+  // if month february and leap year return 29
+
+  return days;
 }

@@ -13,15 +13,13 @@ const sxCalendarContainer = {
 }
 
 const CalendarContainer = (): React.ReactElement => {
-
   const currentDate = new Date();
-
-  const startingMonth = getMonth({ date: currentDate });
+  const currentMonth = getMonth({ date: currentDate });
 
   return (
     <Box sx={sxCalendarContainer}>
-      <CalendarHeader monthName={startingMonth} />
-      <CalendarBody />
+      <CalendarHeader monthName={currentMonth} />
+      <CalendarBody currentMonth={currentMonth} currentDate={currentDate} />
     </Box>
   )
 }
