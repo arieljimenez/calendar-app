@@ -2,7 +2,12 @@ interface getCellColorProps {
   idx: number;
   dayNumber: number;
 }
-
+/**
+ * getCellColor
+ * @param [number] idx - current cell index;
+ * @param [number] dayNumber - current day
+ * @returns [string] color
+ */
 export function getCellColor({ idx, dayNumber }: getCellColorProps): string {
   let color = 'black';
 
@@ -60,6 +65,6 @@ export function getMonthDays(month:string): number {
   let days = MAPPED_MONTHS[month.toLowerCase()];
 
   // if month february and leap year return 29
-
+  // solution https://twitter.com/colindecarlo/status/1360617963297112066?s=09
   return days;
 }

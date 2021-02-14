@@ -1,27 +1,11 @@
 import React from 'react';
-import { Box, Text } from 'theme-ui';
+import { Box } from 'theme-ui';
 
-import { getCellColor, getMonthDays } from '../../helpers';
+import { Modal } from '../../components';
+import CalendarCell from './CalendarCell';
 
+import { getMonthDays } from '../../helpers';
 
-const sxCalendarCell = {
-  border: '1px solid',
-  borderStyle:'inset',
-  fontWeight: 'bold',
-  padding: [2],
-}
-
-const CalendarCell = ({ idx=0, dayNumber=0, handleClick}: any): React.ReactElement => (
-  <Box
-    onClick={() => handleClick(idx)}
-    sx={sxCalendarCell}
-    className='calendar-cell'
-  >
-    <Text sx={{color: getCellColor({ idx, dayNumber })}}>
-      {dayNumber ? dayNumber : ''}
-    </Text>
-  </Box>
-)
 
 const sxCalendarBody = {
   border: '1px outset',
@@ -44,38 +28,77 @@ interface CalendarBodyProps {
 }
 
 const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: CalendarBodyProps): React.ReactElement => {
-  const Body = [];
+  const [modalState, setModalState] = React.useState<iModalState>({
+    showModal: false,
+    dateConfig: {
+      currentMonth,
+      currentDate,
+      currentDay: 0,
+      currentFullDate: '',
+    }
+  });
 
-  const monthDays = getMonthDays(currentMonth);
-  // copy without alter the current date
-  const newDate = new Date(currentDate);
-  // move to the first day of the month
-  newDate.setDate(1);
-  // get the weekday
-  const firstDayWeekOfTheMonth = newDate.getDay();
-  // to keep track of the days of the month
-  let currentDay = 0;
+  const calendarDays = () => {
+    const Body = [];
 
-  for (let idx = 0; idx < showMaxCells; idx++) {
-    if (idx >= firstDayWeekOfTheMonth && idx <= monthDays) {
-      currentDay++;
-    } else {
-      // reset the value to get ignored in <CalendarCell />
-      currentDay = 0;
+    const monthDays = getMonthDays(currentMonth);
+    // copy without alter the current date
+    const newDate = new Date(currentDate);
+    // move to the first day of the month
+    newDate.setDate(1);
+    // get the weekday
+    const firstDayWeekOfTheMonth = newDate.getDay();
+    // to keep track of the days of the month
+    let currentDay = 0;
+
+    for (let idx = 0; idx < showMaxCells; idx++) {
+      if (idx >= firstDayWeekOfTheMonth && idx <= monthDays) {
+        currentDay++;
+      } else {
+        // reset the value to get ignored in <CalendarCell />
+        currentDay = 0;
+      }
+
+      Body.push(
+        <CalendarCell
+          key={idx}
+          idx={idx}
+          dayNumber={currentDay}
+          handleClick={handleCellClick}
+        />
+      )
     }
 
-    Body.push(
-      <CalendarCell
-        key={idx}
-        idx={idx}
-        dayNumber={currentDay}
-      />
-    )
+    return Body;
+  }
+
+  const updateModalState = (updatedState:object) => {
+    setModalState({
+      ...modalState,
+      ...updatedState,
+    })
+  }
+
+  const handleCellClick = (dayNumber:number):void => {
+    const currentFullDate = `${dayNumber}/${currentMonth}/${currentDate.getFullYear()}`;
+    updateModalState({
+      showModal: true,
+      dateConfig: {
+        currentMonth,
+        currentDate,
+        currentDay: dayNumber,
+        currentFullDate,
+      }
+    });
+
   }
 
   return (
-    <Box sx={sxCalendarBody}>
-      {Body}
+    <Box>
+      <Box sx={sxCalendarBody}>
+        {calendarDays()}
+      </Box>
+      <Modal modalState={modalState} setModalState={(value) => updateModalState({ showModal: value})} />
     </Box>
   )
 }

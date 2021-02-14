@@ -57,3 +57,16 @@ declare module '*.png' {
 }
 
 /* CUSTOM: ADD YOUR OWN HERE */
+
+interface iDateConfig {
+  currentDate: Date,
+  currentDay: number,
+  currentFullDate: string;
+  currentMonth: string;
+}
+
+interface iModalState {
+  showModal: boolean;
+  dateConfig: iDateConfig;
+}
+
