@@ -17,7 +17,11 @@ const sxEvents = {
       bg: 'green',
       color: 'white',
       fontSize: [1],
-      my: ['1px']
+      my: ['1px'],
+
+      '&:hover': {
+        bg: 'red',
+      }
     }
   }
 }

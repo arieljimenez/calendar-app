@@ -134,10 +134,13 @@ export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStore
     events[year][month][day] = [];
   };
 
-  // save the current event taking in count previous ones
+  // save the current event with the others
+  const updatedDayEvents = [...events[year][month][day], { ...eventData }];
+  // retrieve the organized list of events
+  const organizedDayEvents = organizeEvents(updatedDayEvents);
+  // save!
   events[year][month][day] = [
-    ...events[year][month][day],
-    { ...eventData },
+    ...organizedDayEvents,
   ]
 
   // save appointment to localStore
@@ -152,5 +155,15 @@ export function getEventsByMonth({ year, month }: getEventsByMonthProps): { [key
   const events = getFromLocalStore('events');
 
   return events[year][month];
+}
+
+
+export function organizeEvents(events: iModalEventData[]): iModalEventData[] {
+  return events.sort((eventA, eventB) => {
+    if (eventA.eventTime > eventB.eventTime) return 1;
+    if (eventA.eventTime < eventB.eventTime) return -1;
+    // are the same
+    return 0;
+  });
 }
 

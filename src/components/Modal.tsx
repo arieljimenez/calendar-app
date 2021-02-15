@@ -108,6 +108,7 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
               onChange={(e) => handleEventData({ eventTime: e.currentTarget.value })}
             />
             <TextField
+              required
               id="city"
               label="City"
               type="text"
@@ -117,11 +118,15 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
             />
           </div>
           <FormControl fullWidth className="modal-description">
-            <InputLabel htmlFor="description">Description (20 characters max)</InputLabel>
+            <InputLabel htmlFor="description">Description (30 characters max)</InputLabel>
             <Input
+              required
               id="description"
               value={eventData.eventDesc}
               onChange={(e) => handleEventData({ eventDesc: e.currentTarget.value })}
+              inputProps={{
+                maxLength: 30,
+              }}
             />
           </FormControl>
           <div className="modal-btns">

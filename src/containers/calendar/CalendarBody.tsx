@@ -11,7 +11,7 @@ const sxCalendarBody = {
   border: '1px outset',
   display: 'grid',
   gridTemplateColumns: 'repeat(7, 14%)', // 7 cols
-  gridTemplateRows: 'repeat(5, 100px)', // 5 rows
+  gridTemplateRows: 'repeat(5, 150px)', // 5 rows
   justifyContent: 'space-evenly',
   'div.calendar-cell': {
     bg: 'white',
