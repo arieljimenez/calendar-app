@@ -98,3 +98,48 @@ export function getFromLocalStore(keyName: string): any | null {
 export function delFromLocalStore(keyName: string): void {
   localStorage.removeItem(keyName);
 }
+
+interface saveEventLocalStoreProps {
+  dateInfo: iModalDateInfo;
+  eventData: iModalEventData;
+}
+
+export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStoreProps): void {
+  const { year, month, day } = dateInfo;
+
+  let events = getFromLocalStore('events') || {};
+
+
+  // no previews events on this year
+  if (!events[year]) {
+    events = {
+      ...events,
+      [year]: {
+        [month]: {
+          [day]: [],
+        }
+      }
+    }
+  };
+
+  // no previews events on this month
+  if (!events[year][month]) {
+    events[year][month] = {
+      [day]: [],
+    }
+  };
+
+  // no previews events on this day
+  if (!events[year][month][day]) {
+    events[year][month][day] = [];
+  };
+
+  // save the current event taking in count previous ones
+  events[year][month][day] = [
+    ...events[year][month][day],
+    { ...eventData },
+  ]
+
+  // save appointment to localStore
+  setToLocalStore('events', { ...events });
+}

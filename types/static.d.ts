@@ -70,3 +70,14 @@ interface iModalState {
   dateConfig: iDateConfig;
 }
 
+interface iModalDateInfo {
+  year: number;
+  month: string;
+  day: number;
+}
+
+interface iModalEventData {
+  eventDesc: string;
+  eventCity: string;
+  eventTime: string;
+}

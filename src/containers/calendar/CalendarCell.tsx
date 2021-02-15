@@ -21,7 +21,7 @@ interface CalendarCellProps {
 
 const CalendarCell = ({ idx = 0, dayNumber = 0, handleClick=()=>{}}: CalendarCellProps): React.ReactElement => (
   <Box
-    onClick={() => handleClick(dayNumber)}
+    onClick={() => dayNumber ? handleClick(dayNumber): ()=>{}}
     sx={sxCalendarCell}
     className='calendar-cell'
   >

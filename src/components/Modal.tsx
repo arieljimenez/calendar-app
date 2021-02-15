@@ -10,7 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 
-import { setToLocalStore } from '../_helpers';
+import { saveEventLocalStore } from '../_helpers';
 
 const sxModal = {
   bg: 'white',
@@ -41,6 +41,12 @@ const sxModal = {
   }
 }
 
+const DEFAULT_EVENT_DATA:iModalEventData = {
+  eventDesc: '',
+  eventCity: 'New York',
+  eventTime: '09:00', // AM
+}
+
 interface AppModalProps {
   modalState: iModalState;
   setModalState: (state:boolean) => void;
@@ -48,10 +54,8 @@ interface AppModalProps {
 
 const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): React.ReactElement =>  {
   const { showModal, dateConfig:{ currentFullDate, currentDate, currentMonth, currentDay } } = modalState;
-  const [eventData, setEventData] = React.useState({
-    eventDesc: '',
-    eventCity: 'New York',
-    eventTime: '09:00',
+  const [eventData, setEventData] = React.useState<iModalEventData>({
+    ...DEFAULT_EVENT_DATA,
   });
 
   const handleClose = () => {
@@ -67,21 +71,21 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
 
   const handleSaveAppointment = () => {
     const currentYear = currentDate.getFullYear();
-    // save appointment to localStore
-    setToLocalStore('events', {
-      [currentYear]: {
-        [currentMonth]: {
-          [currentDay]: [
-            { ...eventData }
-          ]
-        }
-      }
+    // save event
+    saveEventLocalStore({
+      dateInfo: {
+        year: currentYear,
+        month: currentMonth,
+        day: currentDay,
+      },
+      eventData,
     });
     // closeModal
     setModalState(false);
+    // reset event data
+    handleEventData({ ...DEFAULT_EVENT_DATA });
     // show a snackBar/feedback
   }
-
 
   const body = (
     <Fade in={showModal}>
