@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'theme-ui';
+import { GlobalContext, ACTIONS } from '../../_contexts';
 
 import { getCellColor } from '../../_helpers';
 
@@ -10,6 +11,7 @@ const sxCalendarCell = {
   fontWeight: 'bold',
   padding: [2],
 }
+
 const sxEvents = {
   '.event' : {
     width: '100%',
@@ -69,7 +71,6 @@ const CalendarCell = ({ idx = 0, dayNumber = 0, handleClick=()=>{}, events=[]}: 
       <span>{eventData.eventTime}</span>
     </div>
   ));
-
 
 
   return (

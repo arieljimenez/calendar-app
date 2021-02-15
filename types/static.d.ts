@@ -81,4 +81,27 @@ interface iModalEventData {
   eventCity: string;
   eventTime: string;
   color: string;
+  isEditing?: boolean;
+}
+
+// STATE MANAGEMENT
+type tACTIONS = 'UPDATE_MODAL_INFO'
+  | 'SAVE_EVENT'
+  | 'EDIT_EVENT'
+  | 'DELETE_EVENT'
+  | 'DELETE_ALL_DAY_EVENTS';
+
+interface iActionProps {
+  payload: iModalState | iModalEventData;
+  type: tACTIONS;
+}
+
+interface iEventsState {
+  allEvents: iModalEventData[],
+  currentEvent: iModalEventData,
+}
+
+interface iGlobalState {
+  modalState: iModalState;
+  eventsState: iEventsState;
 }

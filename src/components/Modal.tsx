@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box } from 'theme-ui';
 
+import { GlobalContext, ACTIONS } from '../_contexts';
+
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Fade from '@material-ui/core/Fade';
@@ -8,10 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 
 import { saveEventLocalStore } from '../_helpers';
@@ -60,15 +60,16 @@ const DEFAULT_ERRORS_STATE = {
 }
 
 interface AppModalProps {
-  modalState: iModalState;
   setModalState: (state:boolean) => void;
 }
 
-const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): React.ReactElement =>  {
+const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactElement =>  {
+  const [{ modalState }, dispatch] = React.useContext(GlobalContext) as [iGlobalState, any];
+
   const {
     showModal,
     dateConfig: { currentFullDate, currentDate, currentMonth, currentDay },
-  } = modalState;
+  } = modalState as iModalState;
 
   const [eventData, setEventData] = React.useState<iModalEventData>({
     ...DEFAULT_EVENT_DATA,

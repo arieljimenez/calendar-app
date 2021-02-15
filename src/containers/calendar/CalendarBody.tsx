@@ -6,6 +6,8 @@ import CalendarCell from './CalendarCell';
 
 import { getMonthDays, getEventsByMonth } from '../../_helpers';
 
+import { GlobalContext, ACTIONS } from '../../_contexts';
+
 
 const sxCalendarBody = {
   border: '1px outset',
@@ -28,17 +30,28 @@ interface CalendarBodyProps {
 }
 
 const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: CalendarBodyProps): React.ReactElement => {
-  const [modalState, setModalState] = React.useState<iModalState>({
-    showModal: false,
-    dateConfig: {
-      currentMonth,
-      currentDate,
-      currentDay: 0,
-      currentFullDate: '',
-    }
-  });
+  const [, dispatch] = React.useContext(GlobalContext) as [iGlobalState, React.Dispatch<iActionProps>];
+  const monthEvents  = getEventsByMonth({ year: currentDate.getFullYear(), month: currentMonth });
 
-  const monthEvents  = getEventsByMonth({ year: currentDate.getFullYear(), month: currentMonth })
+  const updateModalState = (updatedState: iModalState) => {
+    dispatch({
+      payload: updatedState,
+      type: ACTIONS.UPDATE_MODAL_INFO,
+    });
+  }
+
+  const handleCellClick = (dayNumber: number): void => {
+    const currentFullDate = `${dayNumber}/${currentMonth}/${currentDate.getFullYear()}`;
+    updateModalState({
+      showModal: true,
+      dateConfig: {
+        currentMonth,
+        currentDate,
+        currentDay: dayNumber,
+        currentFullDate,
+      }
+    });
+  }
 
   const calendarDays = () => {
     const Body = [];
@@ -81,32 +94,12 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
     return Body;
   }
 
-  const updateModalState = (updatedState:object) => {
-    setModalState({
-      ...modalState,
-      ...updatedState,
-    })
-  }
-
-  const handleCellClick = (dayNumber:number):void => {
-    const currentFullDate = `${dayNumber}/${currentMonth}/${currentDate.getFullYear()}`;
-    updateModalState({
-      showModal: true,
-      dateConfig: {
-        currentMonth,
-        currentDate,
-        currentDay: dayNumber,
-        currentFullDate,
-      }
-    });
-  }
-
   return (
     <Box>
       <Box sx={sxCalendarBody}>
         {calendarDays()}
       </Box>
-      <Modal modalState={modalState} setModalState={(value) => updateModalState({ showModal: value})} />
+      <Modal setModalState={(value) => updateModalState({ showModal: value})} />
     </Box>
   )
 }
