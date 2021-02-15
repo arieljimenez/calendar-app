@@ -4,7 +4,7 @@ import { Box } from 'theme-ui';
 import { Modal } from '../../components';
 import CalendarCell from './CalendarCell';
 
-import { getMonthDays } from '../../_helpers';
+import { getMonthDays, getEventsByMonth } from '../../_helpers';
 
 
 const sxCalendarBody = {
@@ -38,6 +38,8 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
     }
   });
 
+  const monthEvents  = getEventsByMonth({ year: currentDate.getFullYear(), month: currentMonth })
+
   const calendarDays = () => {
     const Body = [];
 
@@ -59,12 +61,19 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
         currentDay = 0;
       }
 
+      let dayEvents: iModalEventData[] = [];
+
+      if (currentDay) {
+        dayEvents = monthEvents[currentDay];
+      }
+
       Body.push(
         <CalendarCell
           key={idx}
           idx={idx}
           dayNumber={currentDay}
           handleClick={handleCellClick}
+          events={dayEvents}
         />
       )
     }

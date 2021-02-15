@@ -143,3 +143,14 @@ export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStore
   // save appointment to localStore
   setToLocalStore('events', { ...events });
 }
+
+interface getEventsByMonthProps {
+  year: number;
+  month: string;
+}
+export function getEventsByMonth({ year, month }: getEventsByMonthProps): { [key: number]: iModalEventData[]} {
+  const events = getFromLocalStore('events');
+
+  return events[year][month];
+}
+
