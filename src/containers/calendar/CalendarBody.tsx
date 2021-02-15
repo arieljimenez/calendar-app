@@ -4,7 +4,7 @@ import { Box } from 'theme-ui';
 import { Modal } from '../../components';
 import CalendarCell from './CalendarCell';
 
-import { getMonthDays } from '../../helpers';
+import { getMonthDays } from '../../_helpers';
 
 
 const sxCalendarBody = {
@@ -90,7 +90,6 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
         currentFullDate,
       }
     });
-
   }
 
   return (

@@ -10,6 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 
+import { setToLocalStore } from '../_helpers';
 
 const sxModal = {
   bg: 'white',
@@ -46,17 +47,39 @@ interface AppModalProps {
 }
 
 const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): React.ReactElement =>  {
-  const { showModal, dateConfig:{ currentFullDate } } = modalState;
+  const { showModal, dateConfig:{ currentFullDate, currentDate, currentMonth, currentDay } } = modalState;
+  const [eventData, setEventData] = React.useState({
+    eventDesc: '',
+    eventCity: 'New York',
+    eventTime: '09:00',
+  });
 
   const handleClose = () => {
     setModalState(false);
   };
 
+  const handleEventData = (updatedState:object):void => {
+    setEventData({
+      ...eventData,
+      ...updatedState,
+    })
+  }
+
   const handleSaveAppointment = () => {
+    const currentYear = currentDate.getFullYear();
     // save appointment to localStore
+    setToLocalStore('events', {
+      [currentYear]: {
+        [currentMonth]: {
+          [currentDay]: [
+            { ...eventData }
+          ]
+        }
+      }
+    });
     // closeModal
     setModalState(false);
-    // show a snackBar
+    // show a snackBar/feedback
   }
 
 
@@ -78,6 +101,7 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
               inputProps={{
                 step: 300, // 5 min
               }}
+              onChange={(e) => handleEventData({ eventTime: e.currentTarget.value })}
             />
             <TextField
               id="city"
@@ -85,14 +109,15 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
               type="text"
               defaultValue="New York"
               className="city"
+              onChange={(e) => handleEventData({ eventCity: e.currentTarget.value })}
             />
           </div>
           <FormControl fullWidth className="modal-description">
             <InputLabel htmlFor="description">Description (20 characters max)</InputLabel>
             <Input
               id="description"
-              value={''}
-              onChange={() => {}}
+              value={eventData.eventDesc}
+              onChange={(e) => handleEventData({ eventDesc: e.currentTarget.value })}
             />
           </FormControl>
           <div className="modal-btns">

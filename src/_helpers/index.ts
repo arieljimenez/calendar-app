@@ -68,3 +68,33 @@ export function getMonthDays(month:string): number {
   // solution https://twitter.com/colindecarlo/status/1360617963297112066?s=09
   return days;
 }
+
+/**
+ *
+ * @param keyName string value  to save the values under that name
+ * @param payload object to save
+ * @void
+ */
+export function setToLocalStore(keyName: string, payload: object): void {
+  localStorage.setItem(keyName, JSON.stringify(payload));
+}
+
+/**
+ * get the local stored values under the key
+ * @param keyName - keyValue on in the store
+ * @returns object or null
+ */
+export function getFromLocalStore(keyName: string): any | null {
+  const value = localStorage.getItem(keyName);
+  return value ? JSON.parse(value) : null;
+}
+
+/**
+ *
+ * @param keyName string value  to save the values under that name
+ * @param payload object to save
+ * @void
+ */
+export function delFromLocalStore(keyName: string): void {
+  localStorage.removeItem(keyName);
+}

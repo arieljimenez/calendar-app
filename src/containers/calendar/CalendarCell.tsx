@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'theme-ui';
 
-import { getCellColor } from '../../helpers';
+import { getCellColor } from '../../_helpers';
 
 
 const sxCalendarCell = {

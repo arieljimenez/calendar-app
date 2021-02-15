@@ -4,7 +4,7 @@ import { Box } from 'theme-ui';
 import CalendarHeader from './CalendarHeader';
 import CalendarBody from './CalendarBody';
 
-import { getMonth } from '../../helpers';
+import { getMonth } from '../../_helpers';
 
 const sxCalendarContainer = {
   width: [null, null, '600px', '960px'],
