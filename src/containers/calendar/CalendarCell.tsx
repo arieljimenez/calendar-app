@@ -56,11 +56,21 @@ interface CalendarCellProps {
 }
 
 const CalendarCell = ({ idx = 0, dayNumber = 0, handleClick=()=>{}, events=[]}: CalendarCellProps): React.ReactElement => {
-  const DayEvents = events.map((event, idx) => (
-    <div key={idx} className={`event color-${event.color}`}>
-      <span>{event.eventTime}</span>
+
+  const handleEventClick = (clickEvent, eventData) => {
+    clickEvent.stopPropagation();
+
+    // triggers event Edit
+
+  }
+
+  const DayEvents = events.map((eventData, idx) => (
+    <div key={idx} className={`event color-${eventData.color}`} onClick={(clickEvent) => handleEventClick(clickEvent, eventData)} >
+      <span>{eventData.eventTime}</span>
     </div>
   ));
+
+
 
   return (
     <Box
