@@ -80,4 +80,5 @@ interface iModalEventData {
   eventDesc: string;
   eventCity: string;
   eventTime: string;
+  color: string;
 }

@@ -13,12 +13,33 @@ const sxCalendarCell = {
 const sxEvents = {
   '.event' : {
     width: '100%',
+    color: 'white',
+    fontSize: [1],
+    my: ['1px'],
+
     '&.color-green': {
       bg: 'green',
+      '&:hover': {
+        bg: 'red',
+      }
+    },
+    '&.color-yellow': {
+      bg: 'yellow',
+      color: 'blue',
+      '&:hover': {
+        bg: 'red',
+      }
+    },
+    '&.color-red': {
+      bg: 'red',
       color: 'white',
-      fontSize: [1],
-      my: ['1px'],
-
+      '&:hover': {
+        bg: 'white',
+        color: 'black',
+      }
+    },
+    '&.color-blue': {
+      bg: 'blue',
       '&:hover': {
         bg: 'red',
       }
@@ -36,7 +57,7 @@ interface CalendarCellProps {
 
 const CalendarCell = ({ idx = 0, dayNumber = 0, handleClick=()=>{}, events=[]}: CalendarCellProps): React.ReactElement => {
   const DayEvents = events.map((event, idx) => (
-    <div key={idx} className="event color-green">
+    <div key={idx} className={`event color-${event.color}`}>
       <span>{event.eventTime}</span>
     </div>
   ));

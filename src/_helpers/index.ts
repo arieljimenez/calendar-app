@@ -110,6 +110,14 @@ export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStore
   let events = getFromLocalStore('events') || {};
 
 
+  console.log('== index');
+  console.log({
+    events, year
+  });
+  console.log('index == ');
+
+
+
   // no previews events on this year
   if (!events[year]) {
     events = {
@@ -152,7 +160,11 @@ interface getEventsByMonthProps {
   month: string;
 }
 export function getEventsByMonth({ year, month }: getEventsByMonthProps): { [key: number]: iModalEventData[]} {
-  const events = getFromLocalStore('events');
+  let events = getFromLocalStore('events');
+
+  if (!events || !events[year]) {
+    return {};
+  }
 
   return events[year][month];
 }

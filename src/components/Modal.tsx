@@ -5,10 +5,14 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Fade from '@material-ui/core/Fade';
 import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
 
 import { saveEventLocalStore } from '../_helpers';
 
@@ -38,6 +42,9 @@ const sxModal = {
     display: 'flex',
     justifyContent: 'flex-end',
     mt: [2],
+  },
+  '.error': {
+    color: 'red',
   }
 }
 
@@ -45,6 +52,11 @@ const DEFAULT_EVENT_DATA:iModalEventData = {
   eventDesc: '',
   eventCity: 'New York',
   eventTime: '09:00', // AM
+  color: 'green',
+}
+const DEFAULT_ERRORS_STATE = {
+  emptyDesc: false,
+  emptyCity: false,
 }
 
 interface AppModalProps {
@@ -53,9 +65,17 @@ interface AppModalProps {
 }
 
 const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): React.ReactElement =>  {
-  const { showModal, dateConfig:{ currentFullDate, currentDate, currentMonth, currentDay } } = modalState;
+  const {
+    showModal,
+    dateConfig: { currentFullDate, currentDate, currentMonth, currentDay },
+  } = modalState;
+
   const [eventData, setEventData] = React.useState<iModalEventData>({
     ...DEFAULT_EVENT_DATA,
+  });
+
+  const [modalErrors, setModalErrors] = React.useState({
+    ...DEFAULT_ERRORS_STATE,
   });
 
   const handleClose = () => {
@@ -66,10 +86,20 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
     setEventData({
       ...eventData,
       ...updatedState,
-    })
+    });
   }
 
-  const handleSaveAppointment = () => {
+  const handleSaveAppointment = ():void => {
+    //check for errors
+    if (!eventData.eventDesc || !eventData.eventCity) {
+      setModalErrors({
+        emptyDesc: !eventData.eventDesc,
+        emptyCity: !eventData.eventCity,
+      });
+      // give feedback about errors
+      return;
+    }
+
     const currentYear = currentDate.getFullYear();
     // save event
     saveEventLocalStore({
@@ -107,20 +137,28 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
               }}
               onChange={(e) => handleEventData({ eventTime: e.currentTarget.value })}
             />
-            <TextField
-              required
-              id="city"
-              label="City"
-              type="text"
-              defaultValue="New York"
-              className="city"
-              onChange={(e) => handleEventData({ eventCity: e.currentTarget.value })}
-            />
+            <FormControl>
+              <TextField
+                required
+                error={modalErrors.emptyCity}
+                value={eventData.eventCity}
+                id="city"
+                label="City"
+                type="text"
+                className="city"
+                onChange={(e) => handleEventData({ eventCity: e.currentTarget.value })}
+              />
+              {modalErrors.emptyCity
+                ? <FormHelperText className="error" >Required</FormHelperText>
+                : null
+              }
+            </FormControl>
           </div>
           <FormControl fullWidth className="modal-description">
             <InputLabel htmlFor="description">Description (30 characters max)</InputLabel>
             <Input
               required
+              error={modalErrors.emptyDesc}
               id="description"
               value={eventData.eventDesc}
               onChange={(e) => handleEventData({ eventDesc: e.currentTarget.value })}
@@ -128,6 +166,23 @@ const AppModal = ({ modalState, setModalState = () => {} }: AppModalProps): Reac
                 maxLength: 30,
               }}
             />
+            {modalErrors.emptyDesc
+              ? <FormHelperText className="error" >Required</FormHelperText>
+              : null
+            }
+          </FormControl>
+          <FormControl>
+            <InputLabel htmlFor="description">Color</InputLabel>
+            <NativeSelect
+              value={eventData.color}
+              onChange={(e) => handleEventData({ color: e.currentTarget.value })}
+              className="event-color"
+            >
+              <option value="green">Green</option>
+              <option value="red">Red</option>
+              <option value="yellow">Yellow</option>
+              <option value="blue">Blue</option>
+            </NativeSelect>
           </FormControl>
           <div className="modal-btns">
             <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
