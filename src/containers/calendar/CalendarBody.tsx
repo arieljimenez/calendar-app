@@ -30,8 +30,11 @@ interface CalendarBodyProps {
 }
 
 const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: CalendarBodyProps): React.ReactElement => {
-  const [, dispatch] = React.useContext(GlobalContext) as [iGlobalState, React.Dispatch<iActionProps>];
-  const monthEvents  = getEventsByMonth({ year: currentDate.getFullYear(), month: currentMonth });
+  const CURRENT_YEAR = currentDate.getFullYear();
+  const [{modalState} , dispatch] = React.useContext(GlobalContext) as [iGlobalState, React.Dispatch<iActionProps>];
+  const monthEvents = getEventsByMonth({ year: CURRENT_YEAR, month: currentMonth });
+
+  const currentMonthYearDate = `${currentMonth}/${CURRENT_YEAR}`;
 
   const updateModalState = (updatedState: iModalState) => {
     dispatch({
@@ -41,14 +44,13 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
   }
 
   const handleCellClick = (dayNumber: number): void => {
-    const currentFullDate = `${dayNumber}/${currentMonth}/${currentDate.getFullYear()}`;
     updateModalState({
       showModal: true,
       dateConfig: {
         currentMonth,
         currentDate,
         currentDay: dayNumber,
-        currentFullDate,
+        currentFullDate: `${dayNumber}/${currentMonthYearDate}`
       }
     });
   }
@@ -87,6 +89,7 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
           dayNumber={currentDay}
           handleClick={handleCellClick}
           events={dayEvents}
+          currentMonthYearDate={currentMonthYearDate}
         />
       )
     }
@@ -99,7 +102,10 @@ const CalendarBody = ({ showMaxCells = 35, currentMonth, currentDate }: Calendar
       <Box sx={sxCalendarBody}>
         {calendarDays()}
       </Box>
-      <Modal setModalState={(value) => updateModalState({ showModal: value})} />
+      { modalState.showModal
+        ? <Modal setModalState={(value) => updateModalState({ showModal: value })} />
+        : null
+      }
     </Box>
   )
 }

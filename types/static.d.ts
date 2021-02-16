@@ -77,31 +77,31 @@ interface iModalDateInfo {
 }
 
 interface iModalEventData {
+  id?: number;
   eventDesc: string;
   eventCity: string;
   eventTime: string;
   color: string;
   isEditing?: boolean;
+  eventFullDate: string;
+  eventDay: number;
+  eventYear: number;
 }
 
 // STATE MANAGEMENT
 type tACTIONS = 'UPDATE_MODAL_INFO'
   | 'SAVE_EVENT'
   | 'EDIT_EVENT'
+  | 'UPDATE_DATE_TIME_EVENT'
   | 'DELETE_EVENT'
   | 'DELETE_ALL_DAY_EVENTS';
 
 interface iActionProps {
-  payload: iModalState | iModalEventData;
+  payload: iModalState | iModalEventData | iGlobalState;
   type: tACTIONS;
-}
-
-interface iEventsState {
-  allEvents: iModalEventData[],
-  currentEvent: iModalEventData,
 }
 
 interface iGlobalState {
   modalState: iModalState;
-  eventsState: iEventsState;
+  eventState: iModalEventData;
 }

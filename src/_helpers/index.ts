@@ -102,21 +102,20 @@ export function delFromLocalStore(keyName: string): void {
 interface saveEventLocalStoreProps {
   dateInfo: iModalDateInfo;
   eventData: iModalEventData;
+  editInfo: {
+    isEditing?: boolean;
+    originalEvent?: iModalEventData;
+  }
 }
 
-export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStoreProps): void {
+export function saveEventLocalStore(
+  { dateInfo,
+    eventData,
+    editInfo: { isEditing = false, originalEvent }
+  }: saveEventLocalStoreProps): void {
+
   const { year, month, day } = dateInfo;
-
   let events = getFromLocalStore('events') || {};
-
-
-  console.log('== index');
-  console.log({
-    events, year
-  });
-  console.log('index == ');
-
-
 
   // no previews events on this year
   if (!events[year]) {
@@ -142,6 +141,15 @@ export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStore
     events[year][month][day] = [];
   };
 
+  // this could be a separate helper
+  if (isEditing) {
+    const [oldEventDay, oldEventMonth, oldEventYear] = originalEvent?.eventFullDate.split('/') as [string, string, string];
+    const staleMonthEvents = getDayEventsByDate({ year: oldEventYear, month: oldEventMonth, day: oldEventDay });
+    const previousDaysEvents = staleMonthEvents.filter(previousEvent => previousEvent.id !== originalEvent?.id);
+    // replace old dayEvents with
+    events[oldEventYear][oldEventMonth][oldEventDay] = previousDaysEvents;
+  }
+
   // save the current event with the others
   const updatedDayEvents = [...events[year][month][day], { ...eventData }];
   // retrieve the organized list of events
@@ -149,14 +157,14 @@ export function saveEventLocalStore({ dateInfo, eventData }: saveEventLocalStore
   // save!
   events[year][month][day] = [
     ...organizedDayEvents,
-  ]
+  ];
 
   // save appointment to localStore
   setToLocalStore('events', { ...events });
 }
 
 interface getEventsByMonthProps {
-  year: number;
+  year: number | string;
   month: string;
 }
 export function getEventsByMonth({ year, month }: getEventsByMonthProps): { [key: number]: iModalEventData[]} {
@@ -168,6 +176,14 @@ export function getEventsByMonth({ year, month }: getEventsByMonthProps): { [key
 
   return events[year][month];
 }
+interface getDayEventsByDateProps extends getEventsByMonthProps {
+  day: string;
+}
+export function getDayEventsByDate({ year, month, day }: getDayEventsByDateProps): iModalEventData[] {
+  const monthDayEvents = getEventsByMonth({ year, month });
+
+  return monthDayEvents[parseInt(day)];
+}
 
 
 export function organizeEvents(events: iModalEventData[]): iModalEventData[] {
@@ -178,4 +194,3 @@ export function organizeEvents(events: iModalEventData[]): iModalEventData[] {
     return 0;
   });
 }
-

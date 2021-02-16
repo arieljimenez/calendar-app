@@ -55,15 +55,30 @@ interface CalendarCellProps {
   currentMonth?: number;
   currentYear?: number;
   events: iModalEventData[];
+  currentMonthYearDate: string;
 }
 
-const CalendarCell = ({ idx = 0, dayNumber = 0, handleClick=()=>{}, events=[]}: CalendarCellProps): React.ReactElement => {
+const CalendarCell = (
+  { idx = 0,
+    dayNumber = 0,
+    handleClick = () => { },
+    events = [],
+    currentMonthYearDate,
+  }: CalendarCellProps): React.ReactElement => {
+  const [, dispatch] = React.useContext(GlobalContext) as [iGlobalState, React.Dispatch<iActionProps>];
 
-  const handleEventClick = (clickEvent, eventData) => {
+  const handleEventClick = (clickEvent:React.MouseEvent, eventData:iModalEventData) => {
     clickEvent.stopPropagation();
 
     // triggers event Edit
-
+    dispatch({
+      payload: {
+        ...eventData,
+        eventDay: dayNumber,
+        eventFullDate: `${dayNumber}/${currentMonthYearDate}`
+      },
+      type: ACTIONS.EDIT_EVENT,
+    });
   }
 
   const DayEvents = events.map((eventData, idx) => (

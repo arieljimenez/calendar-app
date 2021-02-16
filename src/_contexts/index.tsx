@@ -1,8 +1,6 @@
-import React, { createContext, ReactElement, useReducer } from 'react';
+import React, { createContext, useReducer } from 'react';
 
 import { default as ACTIONS} from './actions';
-import { setToLocalStore, delFromLocalStore } from '../_helpers';
-
 
 const initialState: iGlobalState = {
   modalState: {
@@ -14,30 +12,57 @@ const initialState: iGlobalState = {
       currentFullDate: '',
     },
   },
-  eventsState: {
-    allEvents: [],
-    currentEvent: {
-      eventDesc: '',
-      eventCity: 'New York',
-      eventTime: '09:00', // AM
-      color: 'green',
-    }
+  eventState: {
+    id: 0,
+    eventDesc: '',
+    eventCity: 'New York',
+    eventTime: '09:00', // AM
+    color: 'green',
+    isEditing: false,
+    eventFullDate: '',
+    eventDay: 0,
+    eventYear: 0,
   }
 }
 
-const userReducer = (state: iGlobalState, action: iActionProps): iGlobalState => {
-  switch (action.type) {
+const userReducer = (state: iGlobalState, {payload, type}: iActionProps): iGlobalState => {
+  switch (type) {
     case ACTIONS.UPDATE_MODAL_INFO:
       return {
-        ...state,
+        ...initialState,
         modalState: {
           ...state.modalState,
-          ...action.payload as iModalState,
-        }
+          ...payload,
+        },
       }
+    case ACTIONS.EDIT_EVENT:
+      return {
+        modalState: {
+          showModal: true,
+          dateConfig: {
+            ...state.modalState.dateConfig,
+            currentDay: payload?.eventDay || state.modalState.dateConfig.currentDay,
+          }
+        },
+        eventState: {
+            ...payload as iModalEventData,
+            isEditing: true,
+          }
+        }
+      case ACTIONS.UPDATE_DATE_TIME_EVENT:
+        return {
+          modalState: {
+            ...state.modalState,
+            ...payload.modalState,
+          },
+          eventState: {
+            ...state.eventState,
+            ...payload.eventState,
+          }
+        }
     default:  // show an error
       console.info('==')
-      console.error("ACTION NOT FOUND: ", { state, action });
+      console.error("ACTION NOT FOUND: ", { state, payload, type });
       console.info('==')
       return state;
   }
