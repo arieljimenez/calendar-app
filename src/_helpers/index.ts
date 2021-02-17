@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 interface getCellColorProps {
   idx: number;
   dayNumber: number;
@@ -23,7 +25,6 @@ export function getCellColor({ idx, dayNumber }: getCellColorProps): string {
   return color;
 }
 
-
 interface getMonthProps {
   date?: any;
   options?: {
@@ -37,7 +38,7 @@ interface getMonthProps {
  * @param {string} [option.month] - the desired month format
  * @returns {string} month
  */
-export function getMonth({ date = new Date(), options = {} }): string {
+export function getMonth({ date = new Date(), options = {} }: getMonthProps): string {
   const dateOptions = {
     month: 'long',
     ...options,
@@ -193,4 +194,30 @@ export function organizeEvents(events: iModalEventData[]): iModalEventData[] {
     // are the same
     return 0;
   });
+}
+
+interface iCondition {
+  code: number;
+  icon: string; // "//cdn.weatherapi.com/weather/64x64/day/296.png"
+  text: string; // "Light rain"
+}
+export async function getCurrentCityWeather({ city, date, time }: { city: string; date: string; time: string }): Promise<iCondition>{
+  // TODO: HIDE THIS TO PUBLIC
+  const { data:{ forecast }}= await axios.get(`http://api.weatherapi.com/v1/forecast.json?key=4c2feeafd782438497b210028211602&q=${city}&date=${date}`);
+  // access to the forecast day
+  const [forecastData] = forecast?.forecastday;
+  // get only the hour
+  const desiredHourIdx = parseInt(time.substring(0, 2));
+  // grab the condition on that our
+  const { condition } = forecastData?.hour[desiredHourIdx];
+  // return it
+  return condition;
+}
+
+export function getFormatDateFromCurrent({ currentDate, currentDay }:{currentDate:Date, currentDay:number}) {
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+  const day = currentDay.toString().padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 }

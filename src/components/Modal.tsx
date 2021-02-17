@@ -13,7 +13,7 @@ import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import NativeSelect from '@material-ui/core/NativeSelect';
 
-import { saveEventLocalStore, getMonth } from '../_helpers';
+import { saveEventLocalStore, getMonth, getCurrentCityWeather, getFormatDateFromCurrent} from '../_helpers';
 
 const sxModal = {
   bg: 'white',
@@ -68,11 +68,26 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
     ...eventState,
   });
 
-  // const [currentDateAndTime, setCurrentDateAndTime] = React.useState('');
-
   const [modalErrors, setModalErrors] = React.useState({
     ...DEFAULT_ERRORS_STATE,
   });
+
+  const [weatherInfo, setWeatherInfo] = React.useState({
+    icon: '',
+    text: '',
+  });
+
+  React.useEffect(() => {
+    handleForecast(new Date(currentFullDate));
+  }, [currentDate, eventData.eventTime, eventData.eventCity])
+
+  // prevent call to past time
+  const handleShowWeather = (dateObj:Date) => {
+    const eventTime = dateObj.getTime();
+    const cTime = new Date().getTime();
+
+    return eventTime > cTime;
+  }
 
   const currentYear = currentDate.getFullYear();
 
@@ -133,19 +148,15 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
   }
 
   const DateAndTimeComponent = () => {
-
-
     if (eventState.isEditing) {
-      const cMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-      const cDay = currentDay.toString().padStart(2, '0');
-      const currentDateAndTime = `${currentYear}-${cMonth}-${cDay}T${eventState.eventTime}`;
+      const currentDateAndTime = getFormatDateFromCurrent({ currentDate, currentDay });
 
       return (
         <TextField
           id="date-time"
           label="Date and Time"
           type="datetime-local"
-          value={currentDateAndTime}
+          value={`${currentDateAndTime}T${eventState.eventTime}`}
           className="datetime"
           InputLabelProps={{ shrink: true }}
           onChange={(e) => handleDateAndTimeEdit(e.currentTarget.value)}
@@ -169,11 +180,7 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
 
   const handleDateAndTimeEdit = (dateAndTime:string) => {
     const newEventDate = new Date(dateAndTime);
-
-    // eventYear = newEventDate.getFullYear();
     const newEventMonth = getMonth({ date: newEventDate });
-    // eventDay = newEventDate.getDate();
-
     const newEventHours = newEventDate.getHours().toString().padStart(2, '0');
     const newEventMins = newEventDate.getMinutes().toString().padStart(2, '0');
 
@@ -195,6 +202,30 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
       },
       type: ACTIONS.UPDATE_DATE_TIME_EVENT,
     });
+
+    handleForecast(newEventDate);
+  }
+
+  const handleForecast = async (eventDateObj:Date) => {
+    // if passed time is after the actual current time,
+    // the api do historically calls, but that is for another day
+    if (handleShowWeather(eventDateObj)) {
+      const date = getFormatDateFromCurrent({
+        currentDate: eventDateObj,
+        currentDay: eventDateObj.getDate()
+      });
+
+      const weatherData = await getCurrentCityWeather({
+        city: eventData.eventCity,
+        date,
+        time: eventData.eventTime,
+      });
+
+      setWeatherInfo({
+        ...weatherData,
+        icon: weatherData.icon.replace(/64x64/i, '128x128'),
+      });
+    }
   }
 
   const body = (
@@ -205,22 +236,61 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
       <form>
         <div className="time-and-city">
           <DateAndTimeComponent />
+          <Box sx={{
+            backgroundImage: `url(http:${weatherInfo.icon})`,
+            backgroundRepeat: 'no-repeat',
+            position: 'absolute',
+            top: ['0'],
+            right: ['0'],
+            minHeight: ['128px'],
+            minWidth: ['128px'],
+          }}>
+          </Box>
+            <FormControl>
+              <TextField
+                required
+                error={modalErrors.emptyCity}
+                value={eventData.eventCity}
+                id="city"
+                label="City"
+                type="text"
+                className="city"
+                onChange={(e) => handleEventData({ eventCity: e.currentTarget.value })}
+              />
+              {modalErrors.emptyCity
+                ? <FormHelperText className="error">Required</FormHelperText>
+                : null
+              }
+            </FormControl>
+        </div>
+        <div className="time-and-city">
           <FormControl>
-            <TextField
-              required
-              error={modalErrors.emptyCity}
-              value={eventData.eventCity}
-              id="city"
-              label="City"
-              type="text"
-              className="city"
-              onChange={(e) => handleEventData({ eventCity: e.currentTarget.value })}
-            />
-            {modalErrors.emptyCity
-              ? <FormHelperText className="error" >Required</FormHelperText>
-              : null
-            }
+            <InputLabel htmlFor="description">Color</InputLabel>
+            <NativeSelect
+              value={eventData.color}
+              onChange={(e) => handleEventData({ color: e.currentTarget.value })}
+              className="event-color"
+            >
+              <option value="green">Green</option>
+              <option value="red">Red</option>
+              <option value="yellow">Yellow</option>
+              <option value="blue">Blue</option>
+            </NativeSelect>
           </FormControl>
+          {weatherInfo.text
+            ? (<FormControl>
+              <TextField
+                disabled
+                value={weatherInfo.text}
+                id="weather"
+                label="City Weather"
+                type="text"
+                className="watherInfo"
+              />
+              {/* <img src={`http:${weatherInfo.icon}`}/> */}
+            </FormControl>)
+            : null
+          }
         </div>
         <FormControl fullWidth className="modal-description">
           <InputLabel htmlFor="description">Description (30 characters max)</InputLabel>
@@ -238,19 +308,6 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
             ? <FormHelperText className="error" >Required</FormHelperText>
             : null
           }
-        </FormControl>
-        <FormControl>
-          <InputLabel htmlFor="description">Color</InputLabel>
-          <NativeSelect
-            value={eventData.color}
-            onChange={(e) => handleEventData({ color: e.currentTarget.value })}
-            className="event-color"
-          >
-            <option value="green">Green</option>
-            <option value="red">Red</option>
-            <option value="yellow">Yellow</option>
-            <option value="blue">Blue</option>
-          </NativeSelect>
         </FormControl>
         <div className="modal-btns">
           <ButtonGroup variant="text" color="primary" aria-label="text primary button group">
