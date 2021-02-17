@@ -131,7 +131,8 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
         day: currentDay,
       },
       eventData: {
-        ...eventState,
+        ...eventData,
+        eventTime: eventState.eventTime, // eventData.eventTine has the previous value since the eventState is the one who is tied to the update event
         id: new Date().getTime(),
         eventFullDate,
       },
@@ -305,7 +306,7 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
             }}
           />
           {modalErrors.emptyDesc
-            ? <FormHelperText className="error" >Required</FormHelperText>
+            ? <FormHelperText className="error">Required</FormHelperText>
             : null
           }
         </FormControl>
