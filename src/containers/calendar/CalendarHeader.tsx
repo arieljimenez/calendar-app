@@ -57,7 +57,4 @@ const CalendarHeader = ({ monthName }: CalendarHeaderProps): JSX.Element => {
   )
 }
 
-
 export default CalendarHeader;
-
-

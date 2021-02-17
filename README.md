@@ -6,7 +6,7 @@
 
 - ⚛️ [React](https://reactjs.org/)
 - 🚓 [TS](https://www.typescriptlang.org/)
-- 💅🏼 [Rebass](https://rebassjs.org/) + 👩🏻‍🎤 [Emotion](https://emotion.sh/docs/introduction)
+- 💅🏼 [theme-ui](https://theme-ui.com/) + [Material UI](https://material-ui.com/)
 - 🧪 [Jest](https://jestjs.io/docs/)
 - 🎒 [Snowpack](https://www.snowpack.dev/#get-started)
 
@@ -16,7 +16,7 @@
 
 ## Scripts
 
-To run this project, just `$ npm install` to install the dependencies and
+To run this project, just `$ npm install` and
 - `$ npm start` to runs the app in the development mode.
   - Will Open http://localhost:8080 to view it in the browser.
   - The page will reload if you make edits.

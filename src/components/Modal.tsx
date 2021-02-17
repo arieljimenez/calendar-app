@@ -143,8 +143,6 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
     });
     // closeModal
     setModalState(false);
-    // reset event data
-    // handleEventData({ ...DEFAULT_EVENT_DATA });
     // show a snackBar/feedback
   }
 
@@ -288,7 +286,6 @@ const AppModal = ({ setModalState = () => {} }: AppModalProps): React.ReactEleme
                 type="text"
                 className="watherInfo"
               />
-              {/* <img src={`http:${weatherInfo.icon}`}/> */}
             </FormControl>)
             : null
           }
