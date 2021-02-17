@@ -92,12 +92,13 @@ const CalendarCell = (
     <Box
       onClick={() => dayNumber ? handleClick(dayNumber): ()=>{}}
       sx={sxCalendarCell}
-      className='calendar-cell'
+      className={`calendar-cell ${!dayNumber ? 'emtpy-cell' : ''}`}
+      data-testid={`calendar-cell-day-${dayNumber}`}
     >
       { dayNumber ?
         (
           <React.Fragment>
-            <Text sx={{ color: getCellColor({ idx, dayNumber }) }}>
+            <Text sx={{ color: getCellColor({ idx, dayNumber }) }} id={`calendar-day-${dayNumber}`} data-testid={`calendar-day-${dayNumber}`}>
               {dayNumber}
             </Text>
             <Box sx={sxEvents}>
